@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="送给洋洋同学的祝福网页">
     <title>送给洋洋同学的祝福 🌸</title>
     <style>
         * {
@@ -67,7 +68,7 @@
             margin:10px 0;
             letter-spacing:4px;
         }
-        /*画布尺寸，适配动态白色雏菊 */
+        /*画布尺寸，适配动态玫瑰花 */
         #flowerCanvas{
             width:340px;
             height:360px;
@@ -272,7 +273,7 @@
         <div class="content">
             <h1>给洋洋的小祝福 🌸</h1>
             <div class="hearts">🌸 🌼 🐰 🌷 🦋</div>
-            <!--画布，渲染动态淡白色雏菊花朵-->
+            <!--画布，渲染动态玫瑰花CG-->
             <canvas id="flowerCanvas" width="340" height="360"></canvas>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -282,8 +283,8 @@
             <button class="btn" id="blessingBtn" disabled>准备中（0）</button>
             <p class="footer">专属于你的祝福程序</p>
             <audio id="bgMusic" loop preload="auto">
-                <source src="missyouhani.mp3" type="audio/mpeg">
-                <source src="missyouhani.ogg" type="audio/ogg">
+                <source src="./missyouhani.mp3" type="audio/mpeg">
+                <source src="./missyouhani.ogg" type="audio/ogg">
                 您的浏览器不支持音频播放
             
         </div>
@@ -309,12 +310,12 @@
             <div class="popup-countdown">⏳ 4秒后自动关闭</div>
         </div>
     </div>
-    <!--彩蛋图片弹窗，引用外部egg.jpg-->
+    <!--彩蛋图片弹窗，引用外部egg.jpg（相对路径适配github pages）-->
     <div id="eggOverlay">
-        <img src="egg.jpg" alt="彩蛋">
+        <img src="./egg.jpg" alt="彩蛋">
     </div>
     <script>
-        // ============【动态CG淡白色雏菊（原来截图中间大白花）绘制代码】============
+        // ============【动态CG玫瑰花束绘制代码】============
         const canvas = document.getElementById('flowerCanvas');
         const ctx = canvas.getContext('2d');
         let time = 0;
@@ -322,14 +323,14 @@
         let particles = [];
         class Particle{
             constructor(){
-                this.x = 170 + (Math.random()-0.5)*100;
-                this.y = 170 + Math.random()*50;
-                this.vy = -0.35 - Math.random()*0.6;
-                this.vx = (Math.random()-0.5)*0.2;
+                this.x = 170 + (Math.random()-0.5)*120;
+                this.y = 180 + Math.random()*60;
+                this.vy = -0.4 - Math.random()*0.8;
+                this.vx = (Math.random()-0.5)*0.25;
                 this.life = 1;
-                this.decay = 0.004 + Math.random()*0.006;
-                this.size = 1.2 + Math.random()*2.2;
-                this.color = "#ffeeba";
+                this.decay = 0.005 + Math.random()*0.007;
+                this.size = 1 + Math.random()*2.5;
+                this.color = Math.random()>0.5 ? "#ffd1dc":"#ffb7c5";
             }
             update(){
                 this.x += this.vx;
@@ -345,54 +346,125 @@
                 ctx.globalAlpha=1;
             }
         }
-        function drawPetal(cx, cy, angle, len){
+        function drawRosePetal(cx, cy, angle, size, curvature, colorA, colorB){
             ctx.save();
-            ctx.translate(cx,cy);
+            ctx.translate(cx, cy);
             ctx.rotate(angle);
             ctx.beginPath();
-            ctx.moveTo(0,0);
-            ctx.quadraticCurveTo(len*0.3,-len*0.75,0,-len);
-            ctx.quadraticCurveTo(-len*0.3,-len*0.75,0,0);
-            ctx.fillStyle="rgba(255,255,255,0.62)";
+            ctx.moveTo(0, 0);
+            ctx.bezierCurveTo(
+                -size * 0.35, -size * 0.55,
+                -size * curvature, -size * 1.15,
+                0, -size * 1.35
+            );
+            ctx.bezierCurveTo(
+                size * curvature, -size * 1.15,
+                size * 0.35, -size * 0.55,
+                0, 0
+            );
+            const grad = ctx.createLinearGradient(0, 0, 0, -size * 1.35);
+            grad.addColorStop(0, colorA);
+            grad.addColorStop(1, colorB);
+            ctx.fillStyle = grad;
             ctx.fill();
+            ctx.strokeStyle = "rgba(255,255,255,0.35)";
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
             ctx.restore();
         }
-        function drawLotusBloom(){
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            time +=0.024;
-            if(bloomProgress<1) bloomProgress +=0.0038;
-            const cx = 170;
-            const cy = 170;
-            const petalCount =16;
-            const maxLen =112 * bloomProgress;
-            for(let i=0;i<petalCount;i++){
-                const ang = (Math.PI*2/petalCount)*i + Math.sin(time*0.22+i*0.35)*0.035;
-                drawPetal(cx,cy,ang,maxLen);
-            }
-            //黄色花心脉动光晕
-            const pulseScale = Math.sin(time*1.6)*0.11 +0.89;
-            const gradCore = ctx.createRadialGradient(cx,cy,0,cx,cy,42*pulseScale*bloomProgress);
-            gradCore.addColorStop(0,"#fff2b4");
-            gradCore.addColorStop(0.6,"#ffe29c");
-            gradCore.addColorStop(1,"rgba(255,220,130,0)");
+        function drawRoseCenter(cx, cy, size){
+            const pulse = Math.sin(time * 1.8) * 0.12 + 0.88;
+            const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, size);
+            grad.addColorStop(0, `rgba(255,240,246,${pulse})`);
+            grad.addColorStop(0.4, `rgba(255,182,193,${pulse * 0.8})`);
+            grad.addColorStop(1, "rgba(255,120,160,0)");
             ctx.beginPath();
-            ctx.arc(cx,cy,42*pulseScale*bloomProgress,0,Math.PI*2);
-            ctx.fillStyle=gradCore;
+            ctx.arc(cx, cy, size, 0, Math.PI * 2);
+            ctx.fillStyle = grad;
             ctx.fill();
-            //飘散细小光点粒子
-            if(bloomProgress>0.32 && Math.random()>0.62){
+        }
+        function drawBloom(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            time += 0.022;
+            if(bloomProgress < 1) bloomProgress += 0.004;
+            const centerX = 170;
+            const centerY = 160;
+            // 外层大花瓣
+            for(let i = 0; i < 14; i++){
+                const angle = (Math.PI * 2 / 14) * i + Math.sin(time * 0.4 + i) * 0.04;
+                const size = 72 * bloomProgress;
+                drawRosePetal(
+                    centerX, centerY,
+                    angle,
+                    size,
+                    1.45,
+                    "rgba(255,244,248,0.55)",
+                    "rgba(255,182,193,0.25)"
+                );
+            }
+            // 中层花瓣
+            for(let i = 0; i < 11; i++){
+                const angle = (Math.PI * 2 / 11) * i + Math.PI / 11 + Math.sin(time * 0.6 + i) * 0.05;
+                const size = 52 * bloomProgress;
+                drawRosePetal(
+                    centerX, centerY,
+                    angle,
+                    size,
+                    1.35,
+                    "rgba(255,228,238,0.65)",
+                    "rgba(255,155,180,0.35)"
+                );
+            }
+            // 内层花瓣
+            for(let i = 0; i < 8; i++){
+                const angle = (Math.PI * 2 / 8) * i + Math.PI / 8 + Math.sin(time * 0.9 + i) * 0.06;
+                const size = 34 * bloomProgress;
+                drawRosePetal(
+                    centerX, centerY,
+                    angle,
+                    size,
+                    1.25,
+                    "rgba(255,210,224,0.75)",
+                    "rgba(255,130,170,0.45)"
+                );
+            }
+            // 花心光晕
+            drawRoseCenter(centerX, centerY, 46 * bloomProgress);
+            // 花束下方蓬松装饰，模拟原图花团蓬松烟雾感
+            ctx.save();
+            ctx.globalAlpha = 0.35;
+            for(let i = 0; i < 18; i++){
+                const ang = Math.PI + (Math.PI / 18) * i;
+                const len = 80 + Math.sin(time + i) * 4;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY + 40);
+                ctx.quadraticCurveTo(
+                    centerX + Math.cos(ang) * 20,
+                    centerY + 40 + Math.sin(ang) * 20,
+                    centerX + Math.cos(ang) * len,
+                    centerY + 40 + Math.sin(ang) * len
+                );
+                ctx.strokeStyle = i % 2 === 0 ? "rgba(255,190,210,0.4)" : "rgba(255,220,230,0.35)";
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+            }
+            ctx.restore();
+            // 粉色花瓣粒子向上飘散
+            if(bloomProgress > 0.3 && Math.random() > 0.6){
                 particles.push(new Particle());
             }
-            for(let i=particles.length-1;i>=0;i--){
-                const p = particles[i];
+            for(let idx = particles.length - 1; idx >= 0; idx--){
+                const p = particles[idx];
                 p.update();
                 p.draw();
-                if(p.life <=0) particles.splice(i,1);
+                if(p.life <= 0){
+                    particles.splice(idx, 1);
+                }
             }
-            requestAnimationFrame(drawLotusBloom);
+            requestAnimationFrame(drawBloom);
         }
-        drawLotusBloom();
-        // ============【花朵绘制结束；下面保留原有整套祝福业务逻辑，完全不动】============
+        drawBloom();
+        // ============【玫瑰绘制结束；下面保留原有整套祝福业务逻辑，完全不动】============
         const messages = [
             "希望你不要总委屈自己，该对自己好一点💰",
             "赚钱也很辛苦，愿你善待自己🧧",
@@ -423,7 +495,7 @@
             "吃了就是睡，睡了就是玩，玩了就是笑🌸",
             "记得多心疼你自己，不要总是活得太累太紧绷🍀",
 			"我愿意静静倾听，多久都没关系",
-            "你从来都不是麻烦，是我很在意的姐姐",
+			"你从来都不是麻烦，是我很在意的姐姐",
             "心里积攒了烦心事别一个人憋着，难受可以说出来，不要独自消化所有负面情绪☁️",
             "你本就多愁善感，不要把所有人的情绪都扛在自己肩上，你也可以轻松一点🍂"
         ];
@@ -518,7 +590,8 @@
                 clearTimeout(audioTimeoutTimer);
                 musicPreloaded = true;
                 forceCompleteLoad();
-                alert('音频文件加载失败！微信打开建议点右上角在浏览器打开 ❀');
+                console.warn("音频资源读取失败，请确认missyouhani.mp3已经上传仓库根目录！Github Pages部署请注意文件名大小写！");
+                alert('音频文件加载失败！微信打开建议点右上角在浏览器打开 ❀\n请确认mp3文件已经上传仓库！');
             });
             bgMusic.addEventListener('waiting', function() {
                 isAudioWaiting = true;
@@ -791,4 +864,3 @@
     </script>
 </body>
 </html>
-
