@@ -67,15 +67,14 @@
             margin:10px 0;
             letter-spacing:4px;
         }
-        /*画布尺寸，适配动态白色雏菊 */
+        /*画布尺寸，适配动态花朵 */
         #flowerCanvas{
             width:340px;
             height:360px;
             margin:8px 0;
             position:relative;
         }
-
-        /* =========新增：外圈小花环CSS ========= */
+         /* =========新增：外圈小花环CSS ========= */
         .flower-ring {
             position: absolute;
             left: 50%;
@@ -112,7 +111,6 @@
             }
         }
         /* ===================================== */
-
         .progress-bar {
             width: 100%;
             max-width: 300px;
@@ -312,10 +310,10 @@
         <div class="content">
             <h1>给洋洋的小祝福 🌸</h1>
             <div class="hearts">🌸 🌼 🐰 🌷 🦋</div>
-            <!--画布，渲染动态淡白色雏菊花朵-->
+            <!--画布，渲染动态花朵-->
             <div style="position:relative;">
                 <canvas id="flowerCanvas" width="340" height="360"></canvas>
-                <!-- =========新增外圈小花环DOM ========= -->
+                <!-- =========外圈小花环DOM ========= -->
                 <div class="flower-ring">
                     <span class="ring-icon ring-1">🌸</span>
                     <span class="ring-icon ring-2">🌼</span>
@@ -368,7 +366,7 @@
         <img src="egg.jpg" alt="彩蛋">
     </div>
     <script>
-        // ============【动态CG淡白色雏菊 + 音频律动】============
+        // ============【动态CG粉色渐变花朵 + 音频律动】============
         const canvas = document.getElementById('flowerCanvas');
         const ctx = canvas.getContext('2d');
         let time = 0;
@@ -417,6 +415,7 @@
             }
         }
 
+        // 修改：花瓣使用粉色线性渐变，根部深粉，尖端浅粉
         function drawPetal(cx, cy, angle, len){
             ctx.save();
             ctx.translate(cx,cy);
@@ -425,7 +424,13 @@
             ctx.moveTo(0,0);
             ctx.quadraticCurveTo(len*0.3,-len*0.75,0,-len);
             ctx.quadraticCurveTo(-len*0.3,-len*0.75,0,0);
-            ctx.fillStyle="rgba(255,255,255,0.62)";
+
+            // 粉色渐变
+            const grad = ctx.createLinearGradient(0, 0, 0, -len);
+            grad.addColorStop(0, "rgba(255, 212, 226, 0.82)");
+            grad.addColorStop(1, "rgba(255, 238, 243, 0.70)");
+            ctx.fillStyle = grad;
+
             ctx.fill();
             ctx.restore();
         }
