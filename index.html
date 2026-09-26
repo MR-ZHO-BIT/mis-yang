@@ -67,38 +67,40 @@
             margin:10px 0;
             letter-spacing:4px;
         }
-        /*画布尺寸，适配动态花朵 */
+        /*画布尺寸 */
         #flowerCanvas{
             width:340px;
             height:360px;
             margin:8px 0;
             position:relative;
         }
-         /* =========新增：外圈小花环CSS ========= */
+         /* =========外圈小花环CSS 图标距离更远，新图标========= */
         .flower-ring {
             position: absolute;
             left: 50%;
             top: 8px;
-            width: 340px;
-            height: 360px;
+            width: 380px;
+            height: 400px;
             transform: translate(-50%, 0);
             pointer-events: none;
             z-index: 3;
         }
         .ring-icon {
             position: absolute;
-            font-size: 22px;
-            opacity: 0.55;
-            animation: ringFloat 4s ease-in-out infinite;
+            font-size: 24px;
+            opacity: 0.6;
+            animation: ringFloat 4.2s ease-in-out infinite;
         }
-        .ring-1 { top: 10px; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
-        .ring-2 { top: 22%; right: 12px; animation-delay: 0.4s; }
-        .ring-3 { top: 45%; right: 6px; animation-delay: 0.8s; }
-        .ring-4 { bottom: 22%; right: 12px; animation-delay: 1.2s; }
-        .ring-5 { bottom: 10px; left: 50%; transform: translateX(-50%); animation-delay: 1.6s; }
-        .ring-6 { bottom: 22%; left: 12px; animation-delay: 2s; }
-        .ring-7 { top: 45%; left: 6px; animation-delay: 2.4s; }
-        .ring-8 { top: 22%; left: 12px; animation-delay: 2.8s; }
+        .ring-1 { top: -4px; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+        .ring-2 { top: 14%; right: -18px; animation-delay: 0.4s; }
+        .ring-3 { top: 38%; right: -24px; animation-delay: 0.8s; }
+        .ring-4 { bottom: 30%; right: -18px; animation-delay: 1.2s; }
+        .ring-5 { bottom: 4px; left: 50%; transform: translateX(-50%); animation-delay: 1.6s; }
+        .ring-6 { bottom: 30%; left: -18px; animation-delay: 2s; }
+        .ring-7 { top: 38%; left: -24px; animation-delay: 2.4s; }
+        .ring-8 { top: 14%; left: -18px; animation-delay: 2.8s; }
+        .ring-9 { top: 8%; left: 34%; animation-delay: 3.2s; }
+        .ring-10 { bottom: 8%; right: 34%; animation-delay: 3.6s; }
 
         @keyframes ringFloat {
             0%, 100% {
@@ -313,16 +315,18 @@
             <!--画布，渲染动态花朵-->
             <div style="position:relative;">
                 <canvas id="flowerCanvas" width="340" height="360"></canvas>
-                <!-- =========外圈小花环DOM ========= -->
+                <!-- =========外圈小花环DOM 新流行图标 ========= -->
                 <div class="flower-ring">
-                    <span class="ring-icon ring-1">🌸</span>
-                    <span class="ring-icon ring-2">🌼</span>
-                    <span class="ring-icon ring-3">🌷</span>
-                    <span class="ring-icon ring-4">🌺</span>
-                    <span class="ring-icon ring-5">💮</span>
-                    <span class="ring-icon ring-6">🏵️</span>
-                    <span class="ring-icon ring-7">🌸</span>
-                    <span class="ring-icon ring-8">🌼</span>
+                    <span class="ring-icon ring-1">🧸</span>
+                    <span class="ring-icon ring-2">🫧</span>
+                    <span class="ring-icon ring-3">🦋</span>
+                    <span class="ring-icon ring-4">🍡</span>
+                    <span class="ring-icon ring-5">🌷</span>
+                    <span class="ring-icon ring-6">🎀</span>
+                    <span class="ring-icon ring-7">🐰</span>
+                    <span class="ring-icon ring-8">⭐</span>
+                    <span class="ring-icon ring-9">🍰</span>
+                    <span class="ring-icon ring-10">💗</span>
                 </div>
             </div>
 
@@ -415,23 +419,31 @@
             }
         }
 
-        // 修改：花瓣使用粉色线性渐变，根部深粉，尖端浅粉
+        //花瓣：多层粉色渐变，增加边缘高光
         function drawPetal(cx, cy, angle, len){
             ctx.save();
-            ctx.translate(cx,cy);
+            ctx.translate(cx, cy);
             ctx.rotate(angle);
+
             ctx.beginPath();
-            ctx.moveTo(0,0);
-            ctx.quadraticCurveTo(len*0.3,-len*0.75,0,-len);
-            ctx.quadraticCurveTo(-len*0.3,-len*0.75,0,0);
+            ctx.moveTo(0, 0);
+            ctx.quadraticCurveTo(len * 0.32, -len * 0.72, 0, -len);
+            ctx.quadraticCurveTo(-len * 0.32, -len * 0.72, 0, 0);
+            ctx.closePath();
 
-            // 粉色渐变
+            //根部桃粉，中部浅粉，尖端淡粉白
             const grad = ctx.createLinearGradient(0, 0, 0, -len);
-            grad.addColorStop(0, "rgba(255, 212, 226, 0.82)");
-            grad.addColorStop(1, "rgba(255, 238, 243, 0.70)");
+            grad.addColorStop(0, "rgba(255, 182, 193, 0.88)");
+            grad.addColorStop(0.45, "rgba(255, 210, 224, 0.78)");
+            grad.addColorStop(1, "rgba(255, 243, 246, 0.62)");
             ctx.fillStyle = grad;
-
             ctx.fill();
+
+            //花瓣边缘高光
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+
             ctx.restore();
         }
 
