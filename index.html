@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="送给洋洋同学的祝福网页">
     <title>送给洋洋同学的祝福 🌸</title>
     <style>
         * {
@@ -68,12 +67,52 @@
             margin:10px 0;
             letter-spacing:4px;
         }
-        /*画布尺寸，适配动态玫瑰花 */
+        /*画布尺寸，适配动态白色雏菊 */
         #flowerCanvas{
             width:340px;
             height:360px;
             margin:8px 0;
+            position:relative;
         }
+
+        /* =========新增：外圈小花环CSS ========= */
+        .flower-ring {
+            position: absolute;
+            left: 50%;
+            top: 8px;
+            width: 340px;
+            height: 360px;
+            transform: translate(-50%, 0);
+            pointer-events: none;
+            z-index: 3;
+        }
+        .ring-icon {
+            position: absolute;
+            font-size: 22px;
+            opacity: 0.55;
+            animation: ringFloat 4s ease-in-out infinite;
+        }
+        .ring-1 { top: 10px; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+        .ring-2 { top: 22%; right: 12px; animation-delay: 0.4s; }
+        .ring-3 { top: 45%; right: 6px; animation-delay: 0.8s; }
+        .ring-4 { bottom: 22%; right: 12px; animation-delay: 1.2s; }
+        .ring-5 { bottom: 10px; left: 50%; transform: translateX(-50%); animation-delay: 1.6s; }
+        .ring-6 { bottom: 22%; left: 12px; animation-delay: 2s; }
+        .ring-7 { top: 45%; left: 6px; animation-delay: 2.4s; }
+        .ring-8 { top: 22%; left: 12px; animation-delay: 2.8s; }
+
+        @keyframes ringFloat {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+                opacity: 0.45;
+            }
+            50% {
+                transform: translateY(-6px) scale(1.08);
+                opacity: 0.7;
+            }
+        }
+        /* ===================================== */
+
         .progress-bar {
             width: 100%;
             max-width: 300px;
@@ -120,7 +159,7 @@
             font-weight: bold;
             cursor: pointer;
             margin:14px 0;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.35);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.25);
             transition: all 0.3s;
             width: 100%;
             max-width:230px;
@@ -273,8 +312,22 @@
         <div class="content">
             <h1>给洋洋的小祝福 🌸</h1>
             <div class="hearts">🌸 🌼 🐰 🌷 🦋</div>
-            <!--画布，渲染动态玫瑰花CG-->
-            <canvas id="flowerCanvas" width="340" height="360"></canvas>
+            <!--画布，渲染动态淡白色雏菊花朵-->
+            <div style="position:relative;">
+                <canvas id="flowerCanvas" width="340" height="360"></canvas>
+                <!-- =========新增外圈小花环DOM ========= -->
+                <div class="flower-ring">
+                    <span class="ring-icon ring-1">🌸</span>
+                    <span class="ring-icon ring-2">🌼</span>
+                    <span class="ring-icon ring-3">🌷</span>
+                    <span class="ring-icon ring-4">🌺</span>
+                    <span class="ring-icon ring-5">💮</span>
+                    <span class="ring-icon ring-6">🏵️</span>
+                    <span class="ring-icon ring-7">🌸</span>
+                    <span class="ring-icon ring-8">🌼</span>
+                </div>
+            </div>
+
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
                 <div class="progress-heart" id="progressHeart">🐰</div>
@@ -283,8 +336,8 @@
             <button class="btn" id="blessingBtn" disabled>准备中（0）</button>
             <p class="footer">专属于你的祝福程序</p>
             <audio id="bgMusic" loop preload="auto">
-                <source src="./missyouhani.mp3" type="audio/mpeg">
-                <source src="./missyouhani.ogg" type="audio/ogg">
+                <source src="missyouhani.mp3" type="audio/mpeg">
+                <source src="missyouhani.ogg" type="audio/ogg">
                 您的浏览器不支持音频播放
             
         </div>
@@ -310,27 +363,44 @@
             <div class="popup-countdown">⏳ 4秒后自动关闭</div>
         </div>
     </div>
-    <!--彩蛋图片弹窗，引用外部egg.jpg（相对路径适配github pages）-->
+    <!--彩蛋图片弹窗，引用外部egg.jpg-->
     <div id="eggOverlay">
-        <img src="./egg.jpg" alt="彩蛋">
+        <img src="egg.jpg" alt="彩蛋">
     </div>
     <script>
-        // ============【动态CG玫瑰花束绘制代码】============
+        // ============【动态CG淡白色雏菊 + 音频律动】============
         const canvas = document.getElementById('flowerCanvas');
         const ctx = canvas.getContext('2d');
         let time = 0;
         let bloomProgress = 0;
         let particles = [];
+
+        //音频分析全局
+        let audioCtx = null;
+        let analyser = null;
+        let sourceNode = null;
+        let spectrumData = null;
+        let beatScale = 1.0;
+        const smoothFactor = 0.08;
+
+        //外圈小花环更新缩放函数
+        function updateRingScale(scaleVal){
+            const icons = document.querySelectorAll('.ring-icon');
+            icons.forEach(el=>{
+                el.style.transform = `scale(${scaleVal})`;
+            })
+        }
+
         class Particle{
             constructor(){
-                this.x = 170 + (Math.random()-0.5)*120;
-                this.y = 180 + Math.random()*60;
-                this.vy = -0.4 - Math.random()*0.8;
-                this.vx = (Math.random()-0.5)*0.25;
+                this.x = 170 + (Math.random()-0.5)*100;
+                this.y = 170 + Math.random()*50;
+                this.vy = -0.35 - Math.random()*0.6;
+                this.vx = (Math.random()-0.5)*0.2;
                 this.life = 1;
-                this.decay = 0.005 + Math.random()*0.007;
-                this.size = 1 + Math.random()*2.5;
-                this.color = Math.random()>0.5 ? "#ffd1dc":"#ffb7c5";
+                this.decay = 0.004 + Math.random()*0.006;
+                this.size = 1.2 + Math.random()*2.2;
+                this.color = "#ffeeba";
             }
             update(){
                 this.x += this.vx;
@@ -346,125 +416,92 @@
                 ctx.globalAlpha=1;
             }
         }
-        function drawRosePetal(cx, cy, angle, size, curvature, colorA, colorB){
+
+        function drawPetal(cx, cy, angle, len){
             ctx.save();
-            ctx.translate(cx, cy);
+            ctx.translate(cx,cy);
             ctx.rotate(angle);
             ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.bezierCurveTo(
-                -size * 0.35, -size * 0.55,
-                -size * curvature, -size * 1.15,
-                0, -size * 1.35
-            );
-            ctx.bezierCurveTo(
-                size * curvature, -size * 1.15,
-                size * 0.35, -size * 0.55,
-                0, 0
-            );
-            const grad = ctx.createLinearGradient(0, 0, 0, -size * 1.35);
-            grad.addColorStop(0, colorA);
-            grad.addColorStop(1, colorB);
-            ctx.fillStyle = grad;
+            ctx.moveTo(0,0);
+            ctx.quadraticCurveTo(len*0.3,-len*0.75,0,-len);
+            ctx.quadraticCurveTo(-len*0.3,-len*0.75,0,0);
+            ctx.fillStyle="rgba(255,255,255,0.62)";
             ctx.fill();
-            ctx.strokeStyle = "rgba(255,255,255,0.35)";
-            ctx.lineWidth = 0.8;
-            ctx.stroke();
             ctx.restore();
         }
-        function drawRoseCenter(cx, cy, size){
-            const pulse = Math.sin(time * 1.8) * 0.12 + 0.88;
-            const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, size);
-            grad.addColorStop(0, `rgba(255,240,246,${pulse})`);
-            grad.addColorStop(0.4, `rgba(255,182,193,${pulse * 0.8})`);
-            grad.addColorStop(1, "rgba(255,120,160,0)");
-            ctx.beginPath();
-            ctx.arc(cx, cy, size, 0, Math.PI * 2);
-            ctx.fillStyle = grad;
-            ctx.fill();
-        }
-        function drawBloom(){
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            time += 0.022;
-            if(bloomProgress < 1) bloomProgress += 0.004;
-            const centerX = 170;
-            const centerY = 160;
-            // 外层大花瓣
-            for(let i = 0; i < 14; i++){
-                const angle = (Math.PI * 2 / 14) * i + Math.sin(time * 0.4 + i) * 0.04;
-                const size = 72 * bloomProgress;
-                drawRosePetal(
-                    centerX, centerY,
-                    angle,
-                    size,
-                    1.45,
-                    "rgba(255,244,248,0.55)",
-                    "rgba(255,182,193,0.25)"
-                );
+
+        function drawLotusBloom(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            time +=0.024;
+            if(bloomProgress<1) bloomProgress +=0.0038;
+            const cx = 170;
+            const cy = 170;
+
+            //音频频谱计算缩放
+            let targetScale = 1.0;
+            if(analyser && spectrumData){
+                analyser.getByteFrequencyData(spectrumData);
+                let sum = 0;
+                for(let i=0;i<80;i++) sum += spectrumData[i];
+                let avg = sum / 80;
+                targetScale = 1.0 + avg / 320;
             }
-            // 中层花瓣
-            for(let i = 0; i < 11; i++){
-                const angle = (Math.PI * 2 / 11) * i + Math.PI / 11 + Math.sin(time * 0.6 + i) * 0.05;
-                const size = 52 * bloomProgress;
-                drawRosePetal(
-                    centerX, centerY,
-                    angle,
-                    size,
-                    1.35,
-                    "rgba(255,228,238,0.65)",
-                    "rgba(255,155,180,0.35)"
-                );
-            }
-            // 内层花瓣
-            for(let i = 0; i < 8; i++){
-                const angle = (Math.PI * 2 / 8) * i + Math.PI / 8 + Math.sin(time * 0.9 + i) * 0.06;
-                const size = 34 * bloomProgress;
-                drawRosePetal(
-                    centerX, centerY,
-                    angle,
-                    size,
-                    1.25,
-                    "rgba(255,210,224,0.75)",
-                    "rgba(255,130,170,0.45)"
-                );
-            }
-            // 花心光晕
-            drawRoseCenter(centerX, centerY, 46 * bloomProgress);
-            // 花束下方蓬松装饰，模拟原图花团蓬松烟雾感
+            beatScale += (targetScale - beatScale) * smoothFactor;
+            updateRingScale(beatScale);
+
             ctx.save();
-            ctx.globalAlpha = 0.35;
-            for(let i = 0; i < 18; i++){
-                const ang = Math.PI + (Math.PI / 18) * i;
-                const len = 80 + Math.sin(time + i) * 4;
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY + 40);
-                ctx.quadraticCurveTo(
-                    centerX + Math.cos(ang) * 20,
-                    centerY + 40 + Math.sin(ang) * 20,
-                    centerX + Math.cos(ang) * len,
-                    centerY + 40 + Math.sin(ang) * len
-                );
-                ctx.strokeStyle = i % 2 === 0 ? "rgba(255,190,210,0.4)" : "rgba(255,220,230,0.35)";
-                ctx.lineWidth = 1.2;
-                ctx.stroke();
+            ctx.translate(cx,cy);
+            ctx.scale(beatScale,beatScale);
+            ctx.translate(-cx,-cy);
+
+            const petalCount =16;
+            const maxLen =112 * bloomProgress;
+            for(let i=0;i<petalCount;i++){
+                const ang = (Math.PI*2/petalCount)*i + Math.sin(time*0.22+i*0.35)*0.035;
+                drawPetal(cx,cy,ang,maxLen);
             }
+            //黄色花心脉动光晕
+            const pulseScale = Math.sin(time*1.6)*0.11 +0.89;
+            const gradCore = ctx.createRadialGradient(cx,cy,0,cx,cy,42*pulseScale*bloomProgress);
+            gradCore.addColorStop(0,"#fff2b4");
+            gradCore.addColorStop(0.6,"#ffe29c");
+            gradCore.addColorStop(1,"rgba(255,220,130,0)");
+            ctx.beginPath();
+            ctx.arc(cx,cy,42*pulseScale*bloomProgress,0,Math.PI*2);
+            ctx.fillStyle=gradCore;
+            ctx.fill();
+
             ctx.restore();
-            // 粉色花瓣粒子向上飘散
-            if(bloomProgress > 0.3 && Math.random() > 0.6){
+
+            //飘散细小光点粒子（粒子不受缩放）
+            if(bloomProgress>0.32 && Math.random()>0.62){
                 particles.push(new Particle());
             }
-            for(let idx = particles.length - 1; idx >= 0; idx--){
-                const p = particles[idx];
+            for(let i=particles.length-1;i>=0;i--){
+                const p = particles[i];
                 p.update();
                 p.draw();
-                if(p.life <= 0){
-                    particles.splice(idx, 1);
-                }
+                if(p.life <=0) particles.splice(i,1);
             }
-            requestAnimationFrame(drawBloom);
+            requestAnimationFrame(drawLotusBloom);
         }
-        drawBloom();
-        // ============【玫瑰绘制结束；下面保留原有整套祝福业务逻辑，完全不动】============
+        drawLotusBloom();
+
+        //初始化音频分析器（点击播放时调用）
+        function initAudioAnalyser(){
+            const audioDom = document.getElementById('bgMusic');
+            if(audioCtx) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 512;
+            analyser.smoothingTimeConstant = 0.82;
+            spectrumData = new Uint8Array(analyser.frequencyBinCount);
+            sourceNode = audioCtx.createMediaElementSource(audioDom);
+            sourceNode.connect(analyser);
+            analyser.connect(audioCtx.destination);
+        }
+
+        // ============【花朵绘制结束；下面保留原有整套祝福业务逻辑】============
         const messages = [
             "希望你不要总委屈自己，该对自己好一点💰",
             "赚钱也很辛苦，愿你善待自己🧧",
@@ -496,7 +533,7 @@
             "记得多心疼你自己，不要总是活得太累太紧绷🍀",
 			"我愿意静静倾听，多久都没关系",
 			"你从来都不是麻烦，是我很在意的姐姐",
-            "心里积攒了烦心事别一个人憋着，难受可以说出来，不要独自消化所有负面情绪☁️",
+			"心里积攒了烦心事别一个人憋着，难受可以说出来，不要独自消化所有负面情绪☁️",
             "你本就多愁善感，不要把所有人的情绪都扛在自己肩上，你也可以轻松一点🍂"
         ];
         const colors = [
@@ -548,6 +585,8 @@
         let audioTimeoutTimer = null;
         let playMonitorTimer = null;
         let isAudioWaiting = false;
+
+
         window.addEventListener('load', function() {
             initAudioLoad();
             startWaitPopups();
@@ -564,6 +603,8 @@
                 if(waitPopupTimer) clearInterval(waitPopupTimer);
             });
         });
+
+
         function startSmoothProgress() {
             smoothProgressTimer = setInterval(() => {
                 if (musicPreloaded || currentPercent >= 100) {
@@ -579,6 +620,8 @@
                 updateProgressDisplay(currentPercent);
             }, 50);
         }
+
+
         function initAudioLoad() {
             bgMusic.addEventListener('canplaythrough', function onCanPlay() {
                 clearTimeout(audioTimeoutTimer);
@@ -590,7 +633,6 @@
                 clearTimeout(audioTimeoutTimer);
                 musicPreloaded = true;
                 forceCompleteLoad();
-                console.warn("音频资源读取失败，请确认missyouhani.mp3已经上传仓库根目录！Github Pages部署请注意文件名大小写！");
                 alert('音频文件加载失败！微信打开建议点右上角在浏览器打开 ❀\n请确认mp3文件已经上传仓库！');
             });
             bgMusic.addEventListener('waiting', function() {
@@ -605,6 +647,8 @@
                 blessingBtn.textContent = "再次播放音乐+接收祝福";
             });
         }
+
+
         function completePreload() {
             clearInterval(waitPopupTimer);
             blessingBtn.disabled = false;
@@ -615,6 +659,8 @@
                 closePopup(activeWaitPopup);
             }
         }
+
+
         function forceCompleteLoad() {
             if (musicPreloaded) return;
             clearInterval(waitPopupTimer);
@@ -628,6 +674,8 @@
                 closePopup(activeWaitPopup);
             }
         }
+
+
         function updateProgressDisplay(percent) {
             const displayPercent = Math.floor(percent);
             progressFill.style.width = `${percent}%`;
@@ -638,6 +686,8 @@
                 isBurstAnimated = true;
             }
         }
+
+
         function triggerHeartBurst() {
             const progressBarRect = progressBar.getBoundingClientRect();
             const burstX = progressBarRect.left + progressBarRect.width / 2;
@@ -662,6 +712,8 @@
                 }
             }, 300);
         }
+
+
         function createFloatHeart() {
             const floatHeart = document.createElement('div');
             floatHeart.className = 'float-heart';
@@ -676,7 +728,7 @@
             floatHeart.style.left = `${randomX}px`;
             floatHeart.style.bottom = `0px`;
             floatHeart.style.fontSize = `${randomSize}px`;
-            floatHeart.style.animation = `heartFloat ${randomDuration}s ease-in-out ${randomDelay}s forwards`;
+            floatHeart.style.animation = `heartFloat ${randomDuration}s ease‑in‑out ${randomDelay}s forwards`;
             floatHeart.style.transform = `rotate(${randomRotate}deg)`;
             document.body.appendChild(floatHeart);
             setTimeout(() => {
@@ -685,6 +737,8 @@
                 }
             }, (randomDelay + randomDuration) * 1000);
         }
+
+
         function startBlessings() {
             if (!musicPlayed) {
                 if (bgMusic.readyState >= 2) {
@@ -734,7 +788,13 @@
             blessingBtn.disabled = true;
             blessingBtn.textContent = "加载中...🎵";
         }
+
+
         function startAudioPlay() {
+            initAudioAnalyser();
+            if(audioCtx && audioCtx.state === 'suspended'){
+                audioCtx.resume();
+            }
             bgMusic.play().catch(err => {
                 alert('微信浏览器音频限制！建议点右上角，在浏览器打开体验完整音乐~');
                 blessingBtn.disabled = false;
@@ -745,11 +805,15 @@
                 if (bgMusic.volume === 0) bgMusic.volume = 1;
             }, 1000);
         }
+
+
         function handleVisibilityChange() {
             if (musicPlayed && !document.hidden && bgMusic.paused && !bgMusic.ended && !isAudioWaiting) {
                 bgMusic.play().catch(()=>{});
             }
         }
+
+
         function createRandomBlessing() {
             if (remainingMessages.length === 0) return;
             const template = document.querySelector('.popup-template');
@@ -791,6 +855,8 @@
                 }
             }, 1000);
         }
+
+
         function createWaitPopup() {
             const template = document.querySelector('.wait-popup-template');
             const templatePopup = template.querySelector('.popup-content');
@@ -837,6 +903,8 @@
                 }
             }, 1000);
         }
+
+
         function closePopup(popup) {
             popup.style.opacity = '0';
             popup.style.transform = 'translateY(20px)';
@@ -846,6 +914,8 @@
                 }
             }, 300);
         }
+
+
         function startWaitPopups() {
             waitPopupTimer = setInterval(() => {
                 if (musicPreloaded) {
@@ -855,6 +925,8 @@
                 if (!isWaitPopupShowing) createWaitPopup();
             }, 8000);
         }
+
+
         blessingBtn.addEventListener('click', function() {
             if (blessingBtn.disabled) return;
             blessingBtn.disabled = true;
