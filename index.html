@@ -74,33 +74,34 @@
             margin:8px 0;
             position:relative;
         }
-         /* =========外圈小花环CSS 图标距离更远，新图标========= */
+         /* =========外圈小花环CSS，放大容器适配截图点位========= */
         .flower-ring {
             position: absolute;
             left: 50%;
             top: 8px;
-            width: 380px;
-            height: 400px;
+            width: 400px;
+            height: 420px;
             transform: translate(-50%, 0);
             pointer-events: none;
             z-index: 3;
         }
         .ring-icon {
             position: absolute;
-            font-size: 24px;
-            opacity: 0.6;
+            font-size: 26px;
+            opacity: 0.65;
             animation: ringFloat 4.2s ease-in-out infinite;
         }
-        .ring-1 { top: -4px; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
-        .ring-2 { top: 14%; right: -18px; animation-delay: 0.4s; }
-        .ring-3 { top: 38%; right: -24px; animation-delay: 0.8s; }
-        .ring-4 { bottom: 30%; right: -18px; animation-delay: 1.2s; }
-        .ring-5 { bottom: 4px; left: 50%; transform: translateX(-50%); animation-delay: 1.6s; }
-        .ring-6 { bottom: 30%; left: -18px; animation-delay: 2s; }
-        .ring-7 { top: 38%; left: -24px; animation-delay: 2.4s; }
-        .ring-8 { top: 14%; left: -18px; animation-delay: 2.8s; }
-        .ring-9 { top: 8%; left: 34%; animation-delay: 3.2s; }
-        .ring-10 { bottom: 8%; right: 34%; animation-delay: 3.6s; }
+        /* 点位：1顶部正中小熊🧸；9左上蛋糕🍰；5底部爱心💗；最底郁金香🌷ring‑10 */
+        .ring-1 { top: -6px; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+        .ring-2 { top: 12%; right: -22px; animation-delay: 0.4s; }
+        .ring-3 { top: 36%; right: -28px; animation-delay: 0.8s; }
+        .ring-4 { bottom: 28%; right: -22px; animation-delay: 1.2s; }
+        .ring-5 { bottom: 4%; left: 50%; transform: translateX(-50%); animation-delay: 1.6s; }
+        .ring-6 { bottom: 28%; left: -22px; animation-delay: 2s; }
+        .ring-7 { top: 36%; left: -28px; animation-delay: 2.4s; }
+        .ring-8 { top: 12%; left: -22px; animation-delay: 2.8s; }
+        .ring-9 { top: 4%; left: 28%; animation-delay: 3.2s; }
+        .ring-10 { bottom: -6px; left: 50%; transform: translateX(-50%); animation-delay: 3.6s; }
 
         @keyframes ringFloat {
             0%, 100% {
@@ -315,18 +316,18 @@
             <!--画布，渲染动态花朵-->
             <div style="position:relative;">
                 <canvas id="flowerCanvas" width="340" height="360"></canvas>
-                <!-- =========外圈小花环DOM 新流行图标 ========= -->
+                <!-- =========外圈小花环DOM，图标对应截图点位 ========= -->
                 <div class="flower-ring">
                     <span class="ring-icon ring-1">🧸</span>
                     <span class="ring-icon ring-2">🫧</span>
                     <span class="ring-icon ring-3">🦋</span>
                     <span class="ring-icon ring-4">🍡</span>
-                    <span class="ring-icon ring-5">🌷</span>
+                    <span class="ring-icon ring-5">💗</span>
                     <span class="ring-icon ring-6">🎀</span>
                     <span class="ring-icon ring-7">🐰</span>
                     <span class="ring-icon ring-8">⭐</span>
                     <span class="ring-icon ring-9">🍰</span>
-                    <span class="ring-icon ring-10">💗</span>
+                    <span class="ring-icon ring-10">🌷</span>
                 </div>
             </div>
 
