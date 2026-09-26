@@ -12,7 +12,6 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
             font-family: "Microsoft YaHei", sans-serif;
             background: linear-gradient(135deg, #ffd1dc, #ffb7b2);
@@ -23,7 +22,6 @@
             align-items: center;
             padding: 20px;
         }
-
         .container {
             position: relative;
             width: 100%;
@@ -39,7 +37,6 @@
             align-items: center;
             z-index: 1;
         }
-
         .heart-bg {
             position: absolute;
             top: 0;
@@ -50,7 +47,6 @@
             z-index: 0;
             pointer-events: none;
         }
-
         .content {
             position: relative;
             z-index: 2;
@@ -59,27 +55,24 @@
             align-items: center;
             width: 100%;
         }
-
         h1 {
             color: #ff7878;
             font-size: 24px;
             margin-bottom:12px;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
         .hearts {
             color: #ff7878;
             font-size: 22px;
             margin:10px 0;
             letter-spacing:4px;
         }
-        /*彼岸花画布*/
+        /*画布尺寸，适配动态雪莲 */
         #flowerCanvas{
-            width:220px;
-            height:240px;
+            width:340px;
+            height:320px;
             margin:8px 0;
         }
-
         .progress-bar {
             width: 100%;
             max-width: 300px;
@@ -110,14 +103,12 @@
             z-index: 3;
             transition: left 0.3s linear;
         }
-
         .message {
             font-size:15px;
             color: #555;
             margin:8px 0;
             font-family: "KaiTi", sans-serif;
         }
-
         .btn {
             background: #ff7878;
             color: white;
@@ -134,26 +125,22 @@
             max-width:230px;
             z-index: 2;
         }
-
         .btn:disabled {
             background: #ff9aa2;
             cursor: not-allowed;
             box-shadow: none;
         }
-
         .btn:active {
             transform: scale(0.97);
             box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
             background: #ff9aa2;
         }
-
         .footer {
             color: #888;
             font-size:12px;
             margin-top:8px;
             font-family: "KaiTi", sans-serif;
         }
-
         .popup-content {
             width: 85%;
             max-width: 380px;
@@ -167,14 +154,12 @@
             transition: all 0.5s;
             z-index: 1000;
         }
-
         .popup-title {
             color: #ff7878;
             font-size: 20px;
             font-weight: bold;
             margin-bottom: 15px;
         }
-
         .popup-message {
             font-size: 17px;
             color: #333;
@@ -182,7 +167,6 @@
             font-family: "KaiTi", sans-serif;
             line-height: 1.6;
         }
-
         .popup-close {
             background: #ff7878;
             color: white;
@@ -193,7 +177,6 @@
             cursor: pointer;
             margin-top: 15px;
         }
-
         .popup-countdown {
             position: absolute;
             bottom: 10px;
@@ -201,14 +184,12 @@
             color: #888;
             font-size: 12px;
         }
-
         .decoration {
             position: absolute;
             font-size: 24px;
             opacity: 0.7;
             z-index: 0;
         }
-
         @keyframes heartBurst {
             0% {
                 transform: scale(0);
@@ -223,7 +204,6 @@
                 opacity: 0;
             }
         }
-
         @keyframes heartFloat {
             0% {
                 transform: translateY(0) rotate(0deg);
@@ -234,7 +214,6 @@
                 opacity: 0;
             }
         }
-
         .burst-heart {
             position: absolute;
             font-size: 24px;
@@ -242,7 +221,6 @@
             pointer-events: none;
             animation: heartBurst 0.8s ease-out forwards;
         }
-
         .float-heart {
             position: absolute;
             font-size: 16px;
@@ -250,19 +228,16 @@
             pointer-events: none;
             opacity: 0;
         }
-
         @keyframes heartbeat {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
-
         @keyframes float {
             0% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0); }
         }
-
         .floating {
             animation: float 3s infinite ease-in-out;
         }
@@ -294,13 +269,11 @@
             🐰🌼💐🦊🌸🐶🌷🐇🦋🌼
             💐🐱🌷🐿️🦋🌸🐰🌼🐇🌷
         </div>
-
         <div class="content">
             <h1>给洋洋的小祝福 🌸</h1>
             <div class="hearts">🌸 🌼 🐰 🌷 🦋</div>
-            <!-- canvas绘制彼岸花 -->
-            <canvas id="flowerCanvas" width="220" height="240"></canvas>
-
+            <!--画布，保留id=flowerCanvas，现在渲染动态雪莲CG-->
+            <canvas id="flowerCanvas" width="340" height="320"></canvas>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
                 <div class="progress-heart" id="progressHeart">🐰</div>
@@ -315,14 +288,12 @@
             
         </div>
     </div>
-
     <div class="popup-template" style="display: none;">
         <div class="popup-content">
             <div class="decoration" style="top: 10px; left: 15px;">🌸</div>
             <div class="decoration" style="top: 15px; right: 20px;">🌼</div>
             <div class="decoration" style="bottom: 40px; left: 20px;">🦋</div>
             <div class="decoration" style="bottom: 35px; right: 15px;">🐰</div>
-
             <div class="popup-title">✨想对洋洋说的悄悄话 ✨</div>
             <div class="popup-message"></div>
             <button class="popup-close">🌸 关闭</button>
@@ -342,102 +313,100 @@
     <div id="eggOverlay">
         <img src="egg.jpg" alt="彩蛋">
     </div>
-
     <script>
-        // =========彼岸花颜色配置区（对应之前python版本）=========
-        const colorOuterStroke = "#d82848";    //外层花瓣轮廓
-        const colorOuterFill = "#e62e50";      //外层花瓣填充
-        const colorInnerStroke = "#c41f3b";    //内层花瓣轮廓
-        const colorInnerFill = "#d92544";      //内层花瓣填充
-        const stamenColor = "#ffdd44";         //花丝颜色
-        const stamenDot = "#ffaa00";           //花丝顶端小点
-        const stemColor = "#205929";           //花杆
-        const leafColor = "#2b7033";           //底部小叶
-        // ========================================================
+        // ============【动态CG雪莲绘制代码（移植过来）】============
+        const canvas = document.getElementById('flowerCanvas');
+        const ctx = canvas.getContext('2d');
+        let time = 0;
+        let bloomProgress = 0;
+        let particles = [];
 
-        //canvas绘制彼岸花
-        const canvas = document.getElementById("flowerCanvas");
-        const ctx = canvas.getContext("2d");
-        const cx = 110;
-        const cy = 70;
-
-        function drawPetal(ctx, r, angleStart){
-            ctx.save();
-            ctx.translate(cx,cy);
-            ctx.rotate(angleStart);
-            for(let i=0;i<6;i++){
-                ctx.arc(0,0,r,0,110*Math.PI/180);
-                ctx.rotate(130*Math.PI/180);
-                ctx.arc(0,0,r,0,110*Math.PI/180);
-                ctx.rotate(130*Math.PI/180);
+        class Particle{
+            constructor(){
+                this.x = 170 + (Math.random()-0.5)*70;
+                this.y = 220 + Math.random()*40;
+                this.vy = -0.6 - Math.random()*1.1;
+                this.vx = (Math.random()-0.5)*0.35;
+                this.life = 1;
+                this.decay = 0.006 + Math.random()*0.008;
+                this.size = 1 + Math.random()*3;
+                this.color = Math.random()>0.5 ? "#fffdfd":"#ffecb8";
             }
-            ctx.restore();
-        }
-
-        function drawBana(){
-            //外层花瓣
-            ctx.save();
-            ctx.strokeStyle = colorOuterStroke;
-            ctx.fillStyle = colorOuterFill;
-            ctx.beginPath();
-            drawPetal(ctx,95,0);
-            ctx.fill(); ctx.stroke();
-            ctx.restore();
-
-            //内层花瓣
-            ctx.save();
-            ctx.strokeStyle = colorInnerStroke;
-            ctx.fillStyle = colorInnerFill;
-            ctx.beginPath();
-            ctx.translate(cx,cy-50);
-            drawPetal(ctx,65,0);
-            ctx.fill(); ctx.stroke();
-            ctx.restore();
-
-            //花蕊
-            ctx.save();
-            ctx.translate(cx,cy-50);
-            for(let i=0;i<12;i++){
-                let ang = i*30 * Math.PI/180;
+            update(){
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+            }
+            draw(){
                 ctx.beginPath();
-                ctx.moveTo(0,0);
-                ctx.strokeStyle = stamenColor;
-                ctx.lineWidth=2;
-                let len=62;
-                ctx.lineTo(Math.cos(ang)*len, Math.sin(ang)*len);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.arc(Math.cos(ang)*len, Math.sin(ang)*len,6,0,Math.PI*2);
-                ctx.fillStyle=stamenDot;
+                ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+                ctx.fillStyle=this.color;
+                ctx.globalAlpha=this.life;
                 ctx.fill();
+                ctx.globalAlpha=1;
             }
-            ctx.restore();
+        }
 
-            //茎
+        function drawPetal(baseAngle, radius, petalSize, wobble){
             ctx.save();
-            ctx.strokeStyle=stemColor;
-            ctx.lineWidth=4;
+            const cx = 170;
+            const cy = 200;
+            ctx.translate(cx,cy);
+            ctx.rotate(baseAngle + wobble*Math.sin(time*0.75 + baseAngle*2.2));
             ctx.beginPath();
-            ctx.moveTo(cx,cy-50);
-            ctx.lineTo(cx,cy+180);
-            ctx.stroke();
-            ctx.restore();
-
-            //两片小叶
-            ctx.save();
-            ctx.strokeStyle=leafColor;
-            ctx.lineWidth=2;
-            ctx.beginPath();
-            ctx.moveTo(cx-12,cy+80);
-            ctx.lineTo(cx-12 - 45*Math.cos(20*Math.PI/180), cy+80+45*Math.sin(20*Math.PI/180));
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(cx+12,cy+80);
-            ctx.lineTo(cx+12 +45*Math.cos(20*Math.PI/180), cy+80+45*Math.sin(20*Math.PI/180));
-            ctx.stroke();
+            ctx.moveTo(0,0);
+            ctx.bezierCurveTo(-petalSize*0.35, -radius*0.45, -petalSize*0.95, -radius*0.82, 0, -radius);
+            ctx.bezierCurveTo(petalSize*0.95, -radius*0.82, petalSize*0.35, -radius*0.45,0,0);
+            const grad = ctx.createLinearGradient(0,0,0,-radius);
+            grad.addColorStop(0,"rgba(255,248,252,0.65)");
+            grad.addColorStop(1,"rgba(252,254,255,0.32)");
+            ctx.fillStyle=grad;
+            ctx.fill();
             ctx.restore();
         }
-        drawBana();
+
+        function drawLotus(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            time += 0.022;
+            if(bloomProgress<1) bloomProgress +=0.0042;
+
+            const layers = [
+                {count:7, baseR:65, petalW:24},
+                {count:11, baseR:102, petalW:32},
+                {count:16, baseR:134, petalW:40}
+            ];
+            for(let ly of layers){
+                for(let i=0;i<ly.count;i++){
+                    const ang = (Math.PI*2 / ly.count)*i;
+                    const curR = ly.baseR * bloomProgress;
+                    drawPetal(ang,curR,ly.petalW*bloomProgress,2.2);
+                }
+            }
+            const pulse = Math.sin(time*2.1)*0.24 +0.76;
+            const centerGrad = ctx.createRadialGradient(170,200,0,170,200,42);
+            centerGrad.addColorStop(0,`rgba(255,239,180,${pulse})`);
+            centerGrad.addColorStop(0.5,`rgba(255,222,130,${pulse*0.65})`);
+            centerGrad.addColorStop(1,"rgba(255,210,110,0)");
+            ctx.beginPath();
+            ctx.arc(170,200,42*bloomProgress,0,Math.PI*2);
+            ctx.fillStyle=centerGrad;
+            ctx.fill();
+
+            if(bloomProgress>0.32 && Math.random()>0.62){
+                particles.push(new Particle());
+            }
+            for(let idx=particles.length-1;idx>=0;idx--){
+                const p=particles[idx];
+                p.update();
+                p.draw();
+                if(p.life <=0){
+                    particles.splice(idx,1);
+                }
+            }
+            requestAnimationFrame(drawLotus);
+        }
+        drawLotus();
+        // ============【雪莲绘制结束；下面保留原有整套祝福业务逻辑，完全不动】============
 
         const messages = [
             "希望你不要总委屈自己，该对自己好一点💰",
@@ -470,7 +439,7 @@
             "记得多心疼你自己，不要总是活得太累太紧绷🍀",
 			"我愿意静静倾听，多久都没关系",
 			"你从来都不是麻烦，是我很在意的姐姐",
-            "心里积攒了烦心事别一个人憋着，难受可以说出来，不要独自消化所有负面情绪☁️",
+			"心里积攒了烦心事别一个人憋着，难受可以说出来，不要独自消化所有负面情绪☁️",
             "你本就多愁善感，不要把所有人的情绪都扛在自己肩上，你也可以轻松一点🍂"
         ];
         const colors = [
@@ -689,14 +658,12 @@
                             blessingBtn.disabled = false;
                             blessingBtn.textContent = "再次接收祝福（音乐继续播放）";
                             remainingMessages = [...messages];
-
                             //=====彩蛋：全部祝福弹窗结束，显示照片3秒====
                             let overlayDom = document.getElementById('eggOverlay');
                             overlayDom.style.display = 'flex';
                             setTimeout(()=>{
                                 overlayDom.style.display = 'none';
                             },3000);
-
                         }, 500);
                         return;
                     }
